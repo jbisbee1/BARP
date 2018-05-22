@@ -31,7 +31,8 @@
 plot.bpd <- function(bpd,
                      var_names = NULL,
                      var_labs = NULL,
-                     is_categorical = NULL,...)
+                     is_categorical = NULL,
+                     cols = c('#f2f0f7','#cbc9e2','#9e9ac8','#6a51a3'),...)
 {
   while (!is.null(dev.list()))  dev.off()
   pd.plot <- bpd$summary
@@ -62,7 +63,7 @@ plot.bpd <- function(bpd,
   }
   
   for(v in 1:length(vars)) {
-    pd.plot[[vars[v]]] <- factor(pd.plot[[vars[v]]],levs[[v]],labels = var_labs[[v]])
+    pd.plot[[vars[v]]] <- factor(pd.plot[[vars[v]]],rev(levs[[v]]),labels = var_labs[[v]])
   }
   
   min.1 <- min(pd.plot$lb,pd.plot$ub)
@@ -149,6 +150,7 @@ plot.bpd <- function(bpd,
         geom_text(aes(label = paste0(round(pred,2),"\n(",round(lb,2),", ",round(ub,2),")")))
     } 
   } else if(length(vars) == 3) {
+    heat.dat <- pd.plot
     ggplot(heat.dat, aes(get(vars[1]), get(vars[2]) )) +
       geom_tile(aes(fill = pred), color = "white") +
       scale_fill_gradient(low = "white", high = "steelblue") +
