@@ -24,10 +24,10 @@ plot.barp <- function(barp.obj,
     plot_convergence_diagnostics(barp.obj$trees)
   } else {
     geo.unit <- colnames(barp.obj$pred.opn)[1]
-    ggplot(barp.obj$pred.opn,aes(y = pred.opn,x = geo.unit)) +
-      geom_point(aes(reorder(geo.unit,pred.opn))) + 
-      geom_text(aes(reorder(geo.unit,pred.opn),label = geo.unit,y = opn.lb),hjust = 1.5) + 
-      geom_errorbar(aes(reorder(geo.unit,pred.opn),ymin = opn.lb,ymax = opn.ub),width = .2,col = rgb(0,0,0,.4)) + 
+    ggplot(barp.obj$pred.opn,aes(y = pred.opn,x = get(geo.unit))) +
+      geom_point(aes(reorder(get(geo.unit),pred.opn))) + 
+      geom_text(aes(reorder(get(geo.unit),pred.opn),label = get(geo.unit),y = opn.lb),hjust = 1.5) + 
+      geom_errorbar(aes(reorder(get(geo.unit),pred.opn),ymin = opn.lb,ymax = opn.ub),width = .2,col = rgb(0,0,0,.4)) + 
       coord_flip() + 
       theme_classic() + 
       theme(axis.title.y = element_blank(),
