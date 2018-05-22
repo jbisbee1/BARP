@@ -40,6 +40,7 @@ barp_prognostic_covs <- function(BARP,
                                  num_permute = 10,
                                  type = "splits",...)
 {
+  BARP <- barp.obj
   bart_machine <- BARP$trees
   if(!type %in% c("trees","splits")) {
     stop("'type' must be one of either 'trees' or 'splits'.")
@@ -79,7 +80,7 @@ barp_prognostic_covs <- function(BARP,
     if(perm_test) {
       cat(paste0("Permutation test for significance.\n"))
       pb <- txtProgressBar(min = 0, max = num_permute, style = 3)
-      permute_counts = array(NA, c(bart_machine$p, bart_machine$p,num_replicates_for_avg=num_reps))
+      permute_counts = array(NA, c(bart_machine$p, bart_machine$p,num_replicates_for_avg=num_permute))
       for (r in 1:num_permute) {
         y_permuted = sample(bart_machine$y, replace = FALSE)
         bart_machine_with_permuted_y = build_bart_machine(bart_machine$X, 
