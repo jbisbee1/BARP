@@ -25,7 +25,7 @@
 #'                                prop_data = .2,
 #'                                levs = list(c(1:4),c(1:4)),
 #'                                credible_interval = c(0.025,0.975))
-#' @export barp
+#' @export
 
 barp_partial_dependence <- function (BARP, vars = c("region","educ"), prop_data = .1,
                                      levs = NULL,credible_interval = c(0.025,.975))

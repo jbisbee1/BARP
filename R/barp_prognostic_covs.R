@@ -30,7 +30,7 @@
 #'                                 num_trees = 20,
 #'                                 num_permute = 30,
 #'                                 type = 'splits')
-#' @export barp
+#' @export
 
 barp_prognostic_covs <- function(BARP,
                                  interactions = F,

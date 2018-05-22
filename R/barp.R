@@ -27,7 +27,7 @@
 #'              proportion = "n",
 #'              cred_int = c(0.025,0.975),
 #'              plot_convergence = T)
-#' @export barp
+#' @export
 
 barp <- function(y,x,dat,census,geo.unit,plot_convergence = T,
                  proportion = "None",cred_int = c(0.025,0.975),BSSD = F,nsims = 20,...) {
