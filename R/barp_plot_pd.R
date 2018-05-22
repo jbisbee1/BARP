@@ -20,7 +20,7 @@
 #'                                vars = c("age","educ"),
 #'                                prop_data = .2,
 #'                                levs = list(c(1:4),c(1:4),
-#'                                credible_interval = c(0.0)))
+#'                                credible_interval = c(0.025,0.975)))
 #' plot.bpd(bpd,
 #'      var_names = c("Age","Education"),
 #'      var_labs = list(c("18-30","31-50","51-65","65+"),

@@ -25,11 +25,10 @@
 #'              census = census06,
 #'              geo.unit = "stateid",
 #'              proportion = "n",
-#'              cred_int = c(0.025,0.975),
-#'              plot_convergence = T)
+#'              cred_int = c(0.025,0.975))
 #' @export
 
-barp <- function(y,x,dat,census,geo.unit,plot_convergence = T,
+barp <- function(y,x,dat,census,geo.unit,
                  proportion = "None",cred_int = c(0.025,0.975),BSSD = F,nsims = 20,...) {
   if(!all(x %in% colnames(dat))) {
     stop(paste("Variable '",x[which(!(x %in% colnames(dat)))],"' is not in your survey data.",sep=""))
@@ -87,8 +86,6 @@ barp <- function(y,x,dat,census,geo.unit,plot_convergence = T,
   }
   colnames(barp.geo)[1] <- geo.unit
   barp.obj <- list("pred.opn" = barp.geo,"trees" = trees)
-  if(plot_convergence) {
-    plot_convergence_diagnostics(trees)
-  }
+  class(barp.obj) <- "barp"
   return(barp.obj)
 }
