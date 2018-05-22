@@ -91,6 +91,7 @@ barp <- function(y,x,dat,census,geo.unit,plot_convergence = T,
                  function(j) sum(barp.dat$n[barp.dat[[geo.unit]]==j]*barp.dat$ci_upper_bd[barp.dat[[geo.unit]]==j])/sum(barp.dat$n[barp.dat[[geo.unit]]==j]))
     barp.geo <- data.frame("geo.unit" = unique(census[[geo.unit]]),"pred.opn" = y.pred,"opn.lb" = y.lb,"opn.ub" = y.ub)
   }
+  colnames(barp.geo)[1] <- geo.unit
   barp.obj <- list("pred.opn" = barp.geo,"trees" = trees)
   if(plot_convergence) {
     plot_convergence_diagnostics(trees)
