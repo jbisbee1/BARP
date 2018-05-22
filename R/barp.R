@@ -50,9 +50,6 @@ barp <- function(y,x,dat,census,geo.unit,plot_convergence = T,
   }
   if(BSSD) {
     barp.geo.tmp <- matrix(NA,nrow = length(unique(census[[geo.unit]])),ncol = nsims)
-    if(!verbose) {
-      pb <- txtProgressBar(min = 0, max = nrow(nsims), style = 3)
-    }
     for(i in 1:nsims) {
       inds <- sample(1:nrow(dat),replace = T)
       x.train <- dat[,which(colnames(dat) %in% x)]
@@ -63,9 +60,6 @@ barp <- function(y,x,dat,census,geo.unit,plot_convergence = T,
       barp.dat <- as.data.frame(cbind(census,p))
       barp.geo.tmp[,i] <- as.vector(sapply(unique(census[[geo.unit]]),
                        function(j) sum(barp.dat$n[barp.dat[[geo.unit]]==j]*barp.dat$p[barp.dat[[geo.unit]]==j])/sum(barp.dat$n[barp.dat[[geo.unit]]==j])))
-      if(!verbose) {
-        setTxtProgressBar(pb, n)
-      }
     }
     y.pred <- apply(barp.geo.tmp,1,mean)
     y.lb <- apply(barp.geo.tmp,1,quantile,cred_int[1])
