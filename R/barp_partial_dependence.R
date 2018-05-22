@@ -90,6 +90,6 @@ barp_partial_dependence <- function (BARP, vars = c("region","educ"), prop_data 
   }
   close(pb)
   res <- list(summary = sum.pred,raw = raw.pred) #,probits = list(summary = sum.prob,raw = raw.prob))
-  class(res) <- "barpd"
+  class(res) <- "bpd"
   return(res)
 }

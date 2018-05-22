@@ -8,4 +8,4 @@ The user must provide both a survey dataset and a ``census'' dataset with identi
 
 BARP produces estimates of an opinion of interest for each geographic unit. If the user chooses, she can also extract confidence intervals for these estimates. These confidence intervals should be used to account for uncertainty in the estimation of opinion when using the opinion estimates in conventional regression contexts. 
 
-The package can be installed by installing ```devtools``` and typing ```install_github/jbisbee1/BARP```.
+The package can be installed by installing ```devtools``` and typing ```install_github('jbisbee1/BARP')```.
