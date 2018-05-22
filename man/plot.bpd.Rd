@@ -5,7 +5,8 @@
 \title{plot.bpd}
 \usage{
 \method{plot}{bpd}(bpd, var_names = NULL, var_labs = NULL,
-  is_categorical = NULL, ...)
+  is_categorical = NULL, cols = c("#f2f0f7", "#cbc9e2", "#9e9ac8",
+  "#6a51a3"), ...)
 }
 \arguments{
 \item{bpd}{A \code{BARP} partial dependence object.}
