@@ -40,8 +40,9 @@ barp_prognostic_covs <- function(BARP,
                                  num_permute = 10,
                                  type = "splits",...)
 {
-  BARP <- barp.obj
   bart_machine <- BARP$trees
+  factors <- names(bart_machine$X)[which(sapply(bart_machine$X, class) == "factor")]
+  
   if(!type %in% c("trees","splits")) {
     stop("'type' must be one of either 'trees' or 'splits'.")
   }
@@ -61,22 +62,37 @@ barp_prognostic_covs <- function(BARP,
     }
     close(pb)
     rownames(interaction_counts) = colnames(interaction_counts) = bart_machine$training_data_features
-    num_total_interactions = bart_machine$p * (bart_machine$p + 1)/2
+    
+    if(length(factors) > 0) {
+      interaction_counts2 <- array(NA,c(ncol(bart_machine$X),ncol(bart_machine$X),num_reps))
+      for(r in 1:num_reps) {
+        tmp <- combine.factors(interaction_counts[,,r],factors[1],inter = T)
+        for(f in 2:length(factors)) {
+          tmp <- combine.factors(tmp,factors[f],inter = T)
+        }
+        interaction_counts2[,,r] <- tmp
+      }
+      
+      rownames(interaction_counts2) = colnames(interaction_counts2)  = rownames(tmp)
+      interaction_counts <- interaction_counts2
+    }
+    num_total_interactions = nrow(interaction_counts) * (nrow(interaction_counts) + 1)/2
     inter_counts <- matrix(NA,nrow = num_reps,ncol = num_total_interactions)
     colnames(inter_counts) <- rep("tmp",num_total_interactions)
     for(r in 1:num_reps) {
       c <- 1
-      for(i in 1:bart_machine$p) {
-        for(j in 1:bart_machine$p) {
+      for(i in 1:nrow(interaction_counts)) {
+        for(j in 1:ncol(interaction_counts)) {
           if(j <= i) {
             inter_counts[r,c] <- interaction_counts[i,j,r]
-            colnames(inter_counts)[c] <- paste(bart_machine$training_data_features[i], 
-                                               "x",bart_machine$training_data_features[j])
+            colnames(inter_counts)[c] <- paste(rownames(interaction_counts[,,r])[i], 
+                                               "x",colnames(interaction_counts[,,r])[j])
             c <- c + 1
           }
         }
       }
     }
+    inter_counts <- inter_counts / apply(inter_counts,1,sum)
     if(perm_test) {
       cat(paste0("Permutation test for significance.\n"))
       pb <- txtProgressBar(min = 0, max = num_permute, style = 3)
@@ -101,21 +117,37 @@ barp_prognostic_covs <- function(BARP,
       }
       close(pb)
       rownames(permute_counts) = colnames(permute_counts) = bart_machine$training_data_features
-      perm_counts <- matrix(NA,nrow = num_reps,ncol = num_total_interactions)
+      
+      if(length(factors) > 0) {
+        permute_counts2 <- array(NA,c(ncol(bart_machine$X),ncol(bart_machine$X),num_permute))
+        for(r in 1:num_permute) {
+          tmp <- combine.factors(permute_counts[,,r],factors[1],inter = T)
+          for(f in 2:length(factors)) {
+            tmp <- combine.factors(tmp,factors[f],inter = T)
+          }
+          permute_counts2[,,r] <- tmp
+        }
+        
+        rownames(permute_counts2) = colnames(permute_counts2)  = rownames(tmp)
+        permute_counts <- permute_counts2
+      }
+      
+      perm_counts <- matrix(NA,nrow = num_permute,ncol = num_total_interactions)
       colnames(perm_counts) <- rep("tmp",num_total_interactions)
-      for(r in 1:num_reps) {
+      for(r in 1:num_permute) {
         c <- 1
-        for(i in 1:bart_machine$p) {
-          for(j in 1:bart_machine$p) {
+        for(i in 1:nrow(permute_counts)) {
+          for(j in 1:nrow(permute_counts)) {
             if(j <= i) {
-              perm_counts[r,c] <- interaction_counts[i,j,r]
-              colnames(perm_counts)[c] <- paste(bart_machine$training_data_features[i], 
-                                                "x",bart_machine$training_data_features[j])
+              perm_counts[r,c] <- permute_counts[i,j,r]
+              colnames(perm_counts)[c] <- paste(rownames(permute_counts[,,r])[i], 
+                                                "x",colnames(permute_counts[,,r])[j])
               c <- c + 1
             }
           }
         }
       }
+      perm_counts <- perm_counts / apply(perm_counts,1,sum)
       p.vals <- sapply(1:ncol(perm_counts), function(x) permute_test(perm_counts[,x],mean(inter_counts[,x])))
       names(p.vals) <- colnames(perm_counts)
       res <- list(covariate_importance = inter_counts,permutation_test = perm_counts,p_vals = p.vals)
@@ -133,6 +165,16 @@ barp_prognostic_covs <- function(BARP,
     }
     close(pb)
     colnames(var_props) = bart_machine$training_data_features_with_missing_features
+    if(length(factors) > 0) {
+      tmp <- combine.factors(var_props,factors[1],inter = F)
+      for(f in 2:length(factors)) {
+        tmp <- combine.factors(tmp,factors[f],inter = F)
+      }
+      var_props <- tmp
+    }
+    
+    
+    
     if(perm_test) {
       cat(paste0("Permutation test for significance.\n"))
       permute_mat = matrix(NA, nrow = num_permute, ncol = bart_machine$p)
@@ -156,6 +198,13 @@ barp_prognostic_covs <- function(BARP,
         setTxtProgressBar(pb, p)
       }
       close(pb)
+      if(length(factors) > 0) {
+        tmp <- combine.factors(permute_mat,factors[1],inter = F)
+        for(f in 2:length(factors)) {
+          tmp <- combine.factors(tmp,factors[f],inter = F)
+        }
+        permute_mat <- tmp
+      }
       p.vals <- sapply(1:ncol(permute_mat), function(x) permute_test(permute_mat[,x],mean(var_props[,x])))
       names(p.vals) <- colnames(permute_mat)
       res <- list(covariate_importance = var_props,permutation_test = permute_mat,p_vals = p.vals)

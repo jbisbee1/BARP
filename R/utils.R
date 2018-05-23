@@ -46,3 +46,20 @@ permute_test <- function(perm_mat,val) {
   pctile <- ecdf(quantile(perm_mat,seq(0,1,by = .01)))
   return(1 - pctile(val))
 }
+
+
+combine.factors <- function(mat,var,inter = F) {
+  inds <- which(substr(colnames(mat),1,nchar(var)) == var)
+  tmp.col <- apply(mat[,inds],1,sum)
+  tmp.mat <- cbind(mat[,-inds],tmp.col)
+  if(inter) {
+    inds <- which(substr(rownames(mat),1,nchar(var)) == var)
+    tmp.row <- apply(tmp.mat[inds,],2,sum)
+    tmp.mat <- rbind(tmp.mat[-inds,],tmp.row)
+    colnames(tmp.mat)[which(colnames(tmp.mat) == "tmp.col")] <- var
+    rownames(tmp.mat)[which(rownames(tmp.mat) == "tmp.row")] <- var 
+  } else {
+    colnames(tmp.mat)[which(colnames(tmp.mat) == "tmp.col")] <- var
+  }
+  return(tmp.mat)
+}
