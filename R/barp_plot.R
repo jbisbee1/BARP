@@ -17,14 +17,14 @@
 #'      evaluate_model = T)
 #' @export
 
-plot.barp <- function(barp.obj,
+plot.barp <- function(barp,
                       evaluate_model = F)
 {
   if(evaluate_model) {
-    plot_convergence_diagnostics(barp.obj$trees)
+    plot_convergence_diagnostics(barp$trees)
   } else {
-    geo.unit <- colnames(barp.obj$pred.opn)[1]
-    ggplot(barp.obj$pred.opn,aes(y = pred.opn,x = get(geo.unit))) +
+    geo.unit <- colnames(barp$pred.opn)[1]
+    ggplot(barp$pred.opn,aes(y = pred.opn,x = get(geo.unit))) +
       geom_point(aes(reorder(get(geo.unit),pred.opn))) + 
       geom_text(aes(reorder(get(geo.unit),pred.opn),label = get(geo.unit),y = opn.lb),hjust = 1.5) + 
       geom_errorbar(aes(reorder(get(geo.unit),pred.opn),ymin = opn.lb,ymax = opn.ub),width = .2,col = rgb(0,0,0,.4)) + 
