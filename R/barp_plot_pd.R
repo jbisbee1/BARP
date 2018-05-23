@@ -62,79 +62,58 @@ plot.bpd <- function(bpd,
     }
   }
   
-  heat.dat <- pd.plot
   for(v in 1:length(vars)) {
-    heat.dat[[vars[v]]] <- factor(heat.dat[[vars[v]]],rev(levs[[v]]),labels = var_labs[[v]])
+    pd.plot[[vars[v]]] <- factor(pd.plot[[vars[v]]],levs[[v]],labels = var_labs[[v]])
   }
   
   min.1 <- min(pd.plot$lb,pd.plot$ub)
   max.1 <- max(pd.plot$lb,pd.plot$ub)
   if(length(vars) == 1) {
-    plot(1:length(levs[[1]]),rep(0,length(levs[[1]])),main = paste0("Partial Dependence Plot:\n",paste(var_names,collapse = " by ")),
-         ylim = c(min.1,max.1),xlim = c(1,length(levs[[1]])),type = 'n',las = 1,xaxt = 'n',bty = 'n',xlab = var_names[1],ylab = ylab_name)
-    axis(1, at = levs[[1]],labels = var_labs[[1]])
     if(is_categorical[1]) {
-      segments(levs[[1]],pd.plot$lb,levs[[1]],pd.plot$ub)
-      points(pd.plot$pred,pch = 21,bg = "white")
+      ggplot(pd.plot,aes(y = pred,x = get(vars[1]))) +
+      geom_point() + 
+      geom_errorbar(aes(ymin = lb,ymax = ub),width = .2,col = rgb(0,0,0,.4)) + 
+      theme_classic() + 
+      labs(title = "Predicted Values and Credible Intervals",
+           y = "Predicted Value",
+           x = var_names[1])
     } else {
-      polygon(c(levs[[1]], rev(levs[[1]])), c(pd.plot$ub, rev(pd.plot$lb)), col = rgb(0,0,0,.2), border = NA)
-      lines(levs[[1]], pd.plot$lb, type = "o", col = "blue", lty = 2)
-      lines(levs[[1]], pd.plot$ub, type = "o", col = "blue", lty = 2)
-      lines(levs[[1]], pd.plot$pred, type = "o", lwd = 2)
+      ggplot(pd.plot,aes(y = pred,x = as.numeric(get(vars[1])))) +
+        geom_line() + 
+        geom_ribbon(aes(ymin = lb,ymax = ub),alpha = .2) + 
+        theme_classic() + 
+        labs(title = "Predicted Values and Credible Intervals",
+             subtitle = paste0(var_names,collapse = " by "),
+             y = "Predicted Value",
+             x = var_names[1])
     }
   } else if(length(vars) == 2) {
     if(all(is_categorical)) {
-      par(oma = c(0,0,0,4))
-      plot(1:length(levs[[1]]),rep(0,length(levs[[1]])),main = paste0("Partial Dependence Plot:\n",paste(var_names,collapse = " by ")),
-           ylim = c(min.1,max.1),xlim = c(1,length(levs[[1]])),type = 'n',las = 1,xaxt = 'n',bty = 'n',xlab = var_names[1],ylab = ylab_name)
-      axis(1, at = levs[[1]],labels = var_labs[[1]])
-      sapply(levs[[1]],function(x) segments(levs[[2]],pd.plot[which(as.numeric(pd.plot[[vars[1]]]) == x),"lb"],levs[[2]],pd.plot[which(as.numeric(pd.plot[[vars[1]]]) == x),"ub"],col = cols[x]))
-      sapply(levs[[1]],function(x) points(pd.plot[which(as.numeric(pd.plot[[vars[1]]]) == x),"pred"],pch = 21,bg = cols[x]))
-      legend(par('usr')[ 2 ]*1.025, mean(par('usr')[c(3,4)]),legend = var_labs[[2]],pch = 21,pt.bg = cols,xpd = NA,cex = .8,title = var_names[2])
+      ggplot(pd.plot,aes(y = pred,x = get(vars[2]),color = factor(get(vars[1])))) +
+        geom_point() + 
+        scale_color_manual(values = cols) + 
+        geom_errorbar(aes(ymin = lb,ymax = ub),width = .2,col = rgb(0,0,0,.4)) + 
+        theme_classic() + 
+        labs(title = "Predicted Values and Credible Intervals",
+             subtitle = paste0(var_names,collapse = " by "),
+             y = "Predicted Value",
+             x = var_names[2]) +
+        guides(color=guide_legend(title = var_names[1]))
     } else if(any(is_categorical)) {
       cat_ind <- which(is_categorical)
       cont_ind <- which(!is_categorical)
-      cats <- length(levs[[cat_ind]])
-      rows <- ceiling(sqrt(cats))
-      colms <- floor(sqrt(cats))
-      
-      mat.layout <- matrix(NA,nrow = rows + 2,ncol = colms + 1)
-      mat.layout[1,2:ncol(mat.layout)] <- 2
-      mat.layout[nrow(mat.layout),2:ncol(mat.layout)] <- cats+3
-      mat.layout[2:(rows+1),2:(colms+1)] <- matrix(3:(cats+2),nrow = rows,ncol = colms,byrow = T)
-      mat.layout[,1] <- 1
-      nf <- layout(mat.layout,heights = c(1,rep(5,rows),1),widths = c(1,rep(5,colms)))
-      # layout.show(nf)
-      par(mar = c(0,0,0,0))
-      plot(0,0,type = 'n',xaxt = 'n',yaxt = 'n',bty = 'n',ylab = "",xlab = "")
-      mtext(text = ylab_name,side = 2,srt = 90,cex = 1.3,line = -2)
-      plot(0,0,type = 'n',xaxt = 'n',yaxt = 'n',bty = 'n',xlab = "",ylab = "")
-      mtext(text = paste0("Partial Dependence Plot:\n",var_names[1]," X ",var_names[2]),side = 3,cex = 1.3,line = -4)
-      
-      par(mar = c(2,2,2,2))
-      for(j in levs[[cat_ind]]) {
-        plot(pd.plot[which(as.numeric(pd.plot[[vars[cat_ind]]]) == j),"pred"],type = 'l',
-             ylim = c(min.1,max.1),las = 1,xlab = "",ylab = "",yaxt = 'n',xaxt = 'n')
-        text(par('usr')[ 2 ]*.985, par('usr')[4],adj = c(1.05,1.5),
-             labels = paste0(var_names[cont_ind],":\n ",var_labs[[cont_ind]][j]),cex = .9)
-        if(j == 1) {
-          axis(2,las = 2,tck = -.02,cex.axis = .8)
-        }
-        if(j == cats) {
-          axis(1,tck = -.02,cex.axis = .8)
-        }
-        
-        polygon(c(levs[[cont_ind]], rev(levs[[cont_ind]])),
-                c(pd.plot[which(as.numeric(pd.plot[[vars[cat_ind]]]) == j),"ub"],
-                  rev(pd.plot[which(as.numeric(pd.plot[[vars[cat_ind]]]) == j),"lb"])), col = rgb(0,0,0,.2), border = NA)
-        lines(levs[[cont_ind]], pd.plot[which(as.numeric(pd.plot[[vars[cat_ind]]]) == j),"ub"], col = "blue", lty = 2)
-        lines(levs[[cont_ind]], pd.plot[which(as.numeric(pd.plot[[vars[cat_ind]]]) == j),"lb"], col = "blue", lty = 2)
-      }
-      par(mar = c(0,0,0,0))
-      plot(0,0,type = 'n',xaxt = 'n',yaxt = 'n',bty = 'n',xlab = "",ylab = "")
-      mtext(text = var_names[cat_ind],side = 1,cex = 1.3,line = -2)
+
+      ggplot(pd.plot,aes(y = pred,x = as.numeric(get(vars[cont_ind])))) +
+        geom_line() + 
+        geom_ribbon(aes(ymin = lb,ymax = ub),alpha = .2) + 
+        facet_wrap(~ get(vars[cat_ind])) + 
+        theme_classic() + 
+        labs(title = "Predicted Values and Credible Intervals",
+             subtitle = paste0(var_names,collapse = " by "),
+             y = "Predicted Value",
+             x = var_names[cont_ind])
     } else {
-      ggplot(heat.dat, aes(get(vars[1]), get(vars[2]) )) +
+      ggplot(pd.plot, aes(get(vars[1]), get(vars[2]) )) +
         geom_tile(aes(fill = pred), color = "white") +
         scale_fill_gradient(low = "white", high = "steelblue") +
         ylab(var_names[2]) +
@@ -150,7 +129,7 @@ plot.bpd <- function(bpd,
         geom_text(aes(label = paste0(round(pred,2),"\n(",round(lb,2),", ",round(ub,2),")")))
     } 
   } else if(length(vars) == 3) {
-    ggplot(heat.dat, aes(get(vars[1]), get(vars[2]) )) +
+    ggplot(pd.plot, aes(get(vars[1]), get(vars[2]) )) +
       geom_tile(aes(fill = pred), color = "white") +
       scale_fill_gradient(low = "white", high = "steelblue") +
       ylab(var_names[2]) +

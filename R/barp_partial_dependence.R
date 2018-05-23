@@ -27,12 +27,19 @@
 #'                                credible_interval = c(0.025,0.975))
 #' @export
 
-barp_partial_dependence <- function (BARP, vars = c("region","educ"), prop_data = .1,
+barp_partial_dependence <- function (BARP, vars = NULL, prop_data = .1,
                                      levs = NULL,credible_interval = c(0.025,.975))
   
 {
+  if(is.null(vars)) {
+    stop("You must supply at least one variable for analysis.")
+  }
   bart_machine <- BARP$trees
   bartMachine:::check_serialization(bart_machine)
+  
+  factors <- names(bart_machine$X)[which(sapply(bart_machine$X, class) == "factor")]
+  vars
+  
   for(v in 1:length(vars)) {
     if (class(vars[v]) == "integer") {
       vars[v] = as.numeric(vars[v])
@@ -40,7 +47,7 @@ barp_partial_dependence <- function (BARP, vars = c("region","educ"), prop_data 
     if (class(vars[v]) == "numeric" && (vars[v] < 1 || vars[v] > bart_machine$p)) {
       stop(paste("You must set var ",v, " to a number between 1 and p =", 
                  bart_machine$p))
-    } else if (class(vars[v]) == "character" && !(vars[v] %in% bart_machine$training_data_features)) {
+    } else if (class(vars[v]) == "character" && !(vars[v] %in% colnames(bart_machine$X))) {
       stop(paste0("var ",v," must be the name of one of the training features (see \"<bart_model>$training_data_features\")"))
     } else if (!(class(vars[v]) == "numeric" || class(vars[v]) == "character")) {
       stop(paste0("var ",v," must be a column number or column name"))
