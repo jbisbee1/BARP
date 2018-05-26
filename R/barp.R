@@ -86,6 +86,6 @@ barp <- function(y,x,dat,census,geo.unit,
   }
   colnames(barp.geo)[1] <- geo.unit
   barp.obj <- list("pred.opn" = barp.geo,"trees" = trees)
-  class(barp.obj) <- "barp"
+  class(barp.obj) <- "brp"
   return(barp.obj)
 }
