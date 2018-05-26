@@ -1,4 +1,4 @@
-#' plot.barp
+#' plot.brp
 #' 
 #' This function plots the predictions by geographic unit \code{geo.unit}. 
 #' @param barp A \code{BARP} object.
@@ -15,10 +15,10 @@
 #'              proportion = "n")
 #' plot(BARP,
 #'      evaluate_model = T)
-#' @export plot.barp
+#' @export plot.brp
 #' @export
 
-plot.barp <- function(barp,
+plot.brp <- function(barp,
                       evaluate_model = F)
 {
   if(evaluate_model) {
