@@ -1,7 +1,7 @@
 #' plot.barpcov
 #' 
 #' This function plots the covariate importance. 
-#' @param barpcov A \code{BARP} covariate importance object.
+#' @param barpcov A \code{BARP} covariate importance object of class "barpcov".
 #' @param var_names A vector of variable names. If \code{NULL} (the default) the variable names are taken from the \code{BARP} covariate importance object.
 #' @param sig_level The significance level at which to evaluate covariate significance. Only applicable for BARP covariate importance objects that included a permutation test. Defaults to \code{0.05}.
 #' @keywords MRP BARP Mister P multilevel regression poststratification
