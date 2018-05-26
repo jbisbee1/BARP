@@ -25,6 +25,7 @@
 #'              var_names = c("Presidential Vote","Religious-Conservative",
 #'                            "Age","Education","Gender X Race","State","Region"),
 #'              sig_level = 0.05)
+#' @export plot.barpcov
 #' @export
 
 plot.barpcov <- function(barpcov,

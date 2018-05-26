@@ -15,6 +15,7 @@
 #'              proportion = "n")
 #' plot(BARP,
 #'      evaluate_model = T)
+#' @export plot.barp
 #' @export
 
 plot.barp <- function(barp,

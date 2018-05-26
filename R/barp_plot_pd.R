@@ -26,6 +26,7 @@
 #'      var_labs = list(c("18-30","31-50","51-65","65+"),
 #'                      c("LTHS","HS","Some Coll","Coll+")),
 #'      is_categorical = c(T,T))
+#' @export plot.bpd
 #' @export
 
 plot.bpd <- function(bpd,
