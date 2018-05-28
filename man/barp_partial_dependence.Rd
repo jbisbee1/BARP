@@ -4,12 +4,10 @@
 \alias{barp_partial_dependence}
 \title{barp_partial_dependence}
 \usage{
-barp_partial_dependence(BARP, vars = c("region", "educ"), prop_data = 0.1,
-  levs = NULL, credible_interval = c(0.025, 0.975))
+barp_partial_dependence(barp, vars = NULL, prop_data = 0.1, levs = NULL,
+  credible_interval = c(0.025, 0.975))
 }
 \arguments{
-\item{BARP}{A \code{BARP} object returned by using the \code{BARP} function.}
-
 \item{vars}{The variable names or column indices of interest.}
 
 \item{prop_data}{The percentage of the original data to use for estimation. Larger values are more time consuming.}
@@ -30,20 +28,20 @@ This function calculates the partial dependence for selected covariates based on
 }
 \examples{
 data("gaymar")
-BARP <- barp(y = "supp_gaymar",
+barp.obj <- barp(y = "supp_gaymar",
              x = c("pvote","religcon","age","educ","gXr","stateid","region"),
              dat = svy,
              census = census06,
              geo.unit = "stateid",
              proportion = "n")
-bpd <- barp_partial_dependence(BARP = BARP,
+bpd <- barp_partial_dependence(barp = barp.obj,
                                vars = c("region","educ"),
                                prop_data = .2,
                                levs = list(c(1:4),c(1:4)),
                                credible_interval = c(0.025,0.975))
 }
 \seealso{
-\code{\link{BARP}} which generates the prerequisite \code{BARP} object.
+\code{\link{barp}} which generates the prerequisite \code{barp} object.
 }
 \keyword{BARP}
 \keyword{MRP}

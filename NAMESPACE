@@ -2,6 +2,7 @@
 
 S3method(plot,barpcov)
 S3method(plot,bpd)
+S3method(plot,brp)
 export(barp)
 export(barp_partial_dependence)
 export(barp_prognostic_covs)
