@@ -35,7 +35,7 @@ barp_partial_dependence <- function (barp,vars = NULL, prop_data = .1,
   if(is.null(vars)) {
     stop("You must supply at least one variable for analysis.")
   }
-  bart_machine <- BARP$trees
+  bart_machine <- barp$trees
   bartMachine:::check_serialization(bart_machine)
   
   factors <- names(bart_machine$X)[which(sapply(bart_machine$X, class) == "factor")]
