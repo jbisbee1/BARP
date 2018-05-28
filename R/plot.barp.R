@@ -1,21 +1,21 @@
 #' plot.brp
 #' 
 #' This function plots the predictions by geographic unit \code{geo.unit}. 
-#' @param barp A \code{BARP} object.
+#' @param barp A \code{\link{barp}} object.
 #' @param evaluate_model Plot model convergence diagnostics? If left to the default \code{FALSE}, return a plot of predictions and credible intervals.
 #' @keywords MRP BARP Mister P multilevel regression poststratification
-#' @seealso \code{\link{BARP}} which creates the prerequisite \code{barp} object.
+#' @seealso \code{\link{barp}} which creates the prerequisite \code{barp} object.
 #' @examples 
 #' data("gaymar")
-#' BARP <- barp(y = "supp_gaymar",
+#' barp.obj <- barp(y = "supp_gaymar",
 #'              x = c("pvote","religcon","age","educ","gXr","stateid","region"),
 #'              dat = svy,
 #'              census = census06,
 #'              geo.unit = "stateid",
 #'              proportion = "n")
-#' plot(BARP,
-#'      evaluate_model = T)
-#' @export plot.brp
+#' plot(barp.obj,
+#'      evaluate_model = F)
+#' @rdname plot.barp
 #' @export
 
 plot.brp <- function(barp,
