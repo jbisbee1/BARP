@@ -1,4 +1,4 @@
-#' plot.brp
+#' plot.barp
 #' 
 #' This function plots the predictions by geographic unit \code{geo.unit}. 
 #' @param barp A \code{\link{barp}} object.
@@ -18,7 +18,7 @@
 #' @rdname plot.barp
 #' @export
 
-plot.brp <- function(barp,
+plot.barp <- function(barp,
                       evaluate_model = F)
 {
   if(evaluate_model) {
