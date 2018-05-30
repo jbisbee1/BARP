@@ -67,8 +67,6 @@ plot.bpd <- function(bpd,
     pd.plot[[vars[v]]] <- factor(pd.plot[[vars[v]]],levs[[v]],labels = var_labs[[v]])
   }
   
-  min.1 <- min(pd.plot$lb,pd.plot$ub)
-  max.1 <- max(pd.plot$lb,pd.plot$ub)
   if(length(vars) == 1) {
     if(is_categorical[1]) {
       ggplot(pd.plot,aes(y = pred,x = get(vars[1]))) +
@@ -112,20 +110,24 @@ plot.bpd <- function(bpd,
         labs(title = "Predicted Values and Credible Intervals",
              subtitle = paste0(var_names,collapse = " by "),
              y = "Predicted Value",
-             x = var_names[cont_ind])
+             x = var_names[cont_ind]) +
+        theme(legend.position="bottom")
     } else {
       ggplot(pd.plot, aes(get(vars[1]), get(vars[2]) )) +
         geom_tile(aes(fill = pred), color = "white") +
         scale_fill_gradient(low = "white", high = "steelblue") +
         ylab(var_names[2]) +
         xlab(var_names[1]) +
-        theme(legend.title = element_text(size = 10),
-              legend.text = element_text(size = 12),
-              plot.title = element_text(size=16),
-              axis.title=element_text(size=14,face="bold"),
-              axis.text.x = element_text(angle = 90, hjust = 1)) +
-        labs(fill = "Predicted Support") +
+        labs(fill = "Predicted Value") +
         theme_minimal() +
+        theme(plot.title = element_text(size=16),
+              axis.title=element_text(size=14,face="bold"),
+              axis.text.x = element_text(angle = 90, hjust = 1),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              legend.title = element_text(size = 10),
+              legend.text = element_text(size = 9)) +
+        guides(fill = guide_colorbar(title.position = "top",title.hjust = .5)) +
         ggtitle(paste0("Partial Dependence Plot:\n",paste(var_names,collapse = " by "))) +
         geom_text(aes(label = paste0(round(pred,2),"\n(",round(lb,2),", ",round(ub,2),")")))
     } 
@@ -136,14 +138,16 @@ plot.bpd <- function(bpd,
       scale_fill_gradient(low = "white", high = "steelblue") +
       ylab(var_names[2]) +
       xlab(var_names[1]) +
-      theme(legend.title = element_text(size = 10),
-            legend.text = element_text(size = 12),
-            plot.title = element_text(size=16),
+      labs(fill = "Predicted Value") +
+      theme_minimal() +
+      theme(plot.title = element_text(size=16),
             axis.title=element_text(size=14,face="bold"),
             axis.text.x = element_text(angle = 90, hjust = 1),
-            strip.text.x = element_text(size=8, angle=75)) +
-      labs(fill = "Predicted Support") +
-      theme_minimal() +
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            legend.title = element_text(size = 10),
+            legend.text = element_text(size = 9)) +
+      guides(fill = guide_colorbar(title.position = "top",title.hjust = .5)) +
       facet_wrap(~ get(vars[3]),ncol = floor(sqrt(ncols))) +
       ggtitle(paste0("Partial Dependence Plot:\n",paste(var_names,collapse = " by ")))
   } else {
