@@ -35,7 +35,7 @@ plot.bpd <- function(bpd,
                      is_categorical = NULL,
                      cols = c('#f2f0f7','#cbc9e2','#9e9ac8','#6a51a3'),...)
 {
-  while (!is.null(dev.list()))  dev.off()
+  #while (!is.null(dev.list()))  dev.off()
   pd.plot <- bpd$summary
   
   vars <- colnames(pd.plot)[which(!(colnames(pd.plot) %in% c("pred","prob","lb","ub")))]
@@ -130,6 +130,7 @@ plot.bpd <- function(bpd,
         geom_text(aes(label = paste0(round(pred,2),"\n(",round(lb,2),", ",round(ub,2),")")))
     } 
   } else if(length(vars) == 3) {
+    ncols <- length(unique(pd.plot[[vars[3]]]))
     ggplot(pd.plot, aes(get(vars[1]), get(vars[2]) )) +
       geom_tile(aes(fill = pred), color = "white") +
       scale_fill_gradient(low = "white", high = "steelblue") +
@@ -143,7 +144,7 @@ plot.bpd <- function(bpd,
             strip.text.x = element_text(size=8, angle=75)) +
       labs(fill = "Predicted Support") +
       theme_minimal() +
-      facet_wrap(~ get(vars[3]),ncol = 2) +
+      facet_wrap(~ get(vars[3]),ncol = floor(sqrt(ncols))) +
       ggtitle(paste0("Partial Dependence Plot:\n",paste(var_names,collapse = " by ")))
   } else {
     cat("More than 3-way interaction. Not plottable by default methods.")

@@ -39,7 +39,6 @@ barp_partial_dependence <- function (barp,vars = NULL, prop_data = .1,
   bartMachine:::check_serialization(bart_machine)
   
   factors <- names(bart_machine$X)[which(sapply(bart_machine$X, class) == "factor")]
-  vars
   
   for(v in 1:length(vars)) {
     if (class(vars[v]) == "integer") {
@@ -59,7 +58,7 @@ barp_partial_dependence <- function (barp,vars = NULL, prop_data = .1,
     quants <- c(.05,seq(.1,.9,by = .1),.95)
     levs <- list(NA)
     for(v in 1:length(vars)) {
-      levs[[v]] <- unique(quantile(bart_machine$model_matrix_training_data[,vars[v]], quants, na.rm = TRUE))
+      levs[[v]] <- unique(quantile(bart_machine$X[,vars[v]], quants, na.rm = TRUE))
       if (length(unique(levs[[v]])) <= 1) {
         warning(paste0("There must be more than one unique value in",vars[v],"."))
         return()
@@ -68,12 +67,15 @@ barp_partial_dependence <- function (barp,vars = NULL, prop_data = .1,
   } else if(class(levs) == "list" && length(levs) != length(vars)) {
     stop("Not enough levs for all provided vars.")
   } else if(class(levs) != "list") {
-    stop("The levs argument should be a list of values for each provided variable.")
+    if(length(vars) == 1) {
+      levs <- list(levs)
+    } else {
+      stop("The levs argument should be a list of values for each provided variable.")
+    }
   }
   
   n_samp = round(bart_machine$n * prop_data)
-  
-  sum.pred <- sum.prob <- as.matrix(expand.grid(levs))
+  sum.pred <- sum.prob <- as.data.frame(expand.grid(levs))
   sum.pred <- as.data.frame(cbind(sum.pred,matrix(NA,nrow = nrow(sum.pred),ncol = 3)))
   # sum.prob <- as.data.frame(cbind(sum.prob,matrix(NA,nrow = nrow(sum.prob),ncol = 3)))
   colnames(sum.pred) <- c(vars,"pred","lb","ub")
@@ -87,6 +89,7 @@ barp_partial_dependence <- function (barp,vars = NULL, prop_data = .1,
     for(col in 1:length(vars)) {
       test_data[, vars[col]] = rep(sum.pred[n,col], n_samp)
     }
+    
     tmp <- extract_predictions(bart_machine,test_data,credible_interval)
     sum.pred[n,c("pred","lb","ub")] <- tmp$summary.pred
     
