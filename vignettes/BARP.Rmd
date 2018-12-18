@@ -2,7 +2,7 @@
 title: "BARP: MRP - Multilevel + BART"
 author: "James Bisbee (NYU)"
 date: "james.bisbee@nyu.edu"
-output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
 bibliography: "barp.bib"
 vignette: >
   %\VignetteIndexEntry{BARP: MRP - Multilevel + BART}
@@ -31,7 +31,7 @@ In **Section 2** I demonstrate how to explore the partial depedencies generated 
 ## 0.0 A BART primer
 This section introduces Bayesian Additive Regression Trees. Users are encouraged to refer to @chipman_bart:_2010 for a more detailed discussion.
 
-A single regression tree $\mathcal{T}$ approximates an unknown function $f$ by recusively partitioning the covariate space ($\mathbf{X}$) to best organize observations ($i$) according to some outcome $Y$. The resulting bins (commonly referred to as "nodes" or "leafs") proceed until a stopping criteria is met. Each terminal node $b$ is associated with a parameter value $\mu_b$ which combine to form the set $\mathcal{M}$. Observed values of $x \in \mathcal{X}$ are assigned to a $\mu_i \in \mathcal{M}$ by a function $g(x; \mathcal{T},\mathcal{M})$ which is an approximation of the unknown function $f$. Armed with many such trees indexed by $t$, the researcher can predict $Y$ via 
+A single regression tree $\mathcal{T}$ approximates an unknown function $f$ by recursively partitioning the covariate space ($\mathbf{X}$) to best organize observations ($i$) according to some outcome $Y$. The resulting bins (commonly referred to as "nodes" or "leafs") proceed until a stopping criteria is met. Each terminal node $b$ is associated with a parameter value $\mu_b$ which combine to form the set $\mathcal{M}$. Observed values of $x \in \mathcal{X}$ are assigned to a $\mu_i \in \mathcal{M}$ by a function $g(x; \mathcal{T},\mathcal{M})$ which is an approximation of the unknown function $f$. Armed with many such trees indexed by $t$, the researcher can predict $Y$ via 
 
 $$ Y = \sum_{t=1}^T g(\mathbf{X}; \mathcal{T}_t,\mathcal{M}_t) + \epsilon, \hspace{1cm} \epsilon \sim \mathcal{N}(0,\sigma^2)$$
 The Bayesian aspect of BART imposes priors on the parameters $(\mathcal{T}_t,\mathcal{M}_t)$ and $\sigma^2$, the details of which can be found in @chipman_bart:_2010. 
