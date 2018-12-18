@@ -7,7 +7,6 @@ bibliography: "barp.bib"
 vignette: >
   %\VignetteIndexEntry{BARP: MRP - Multilevel + BART}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 Multilevel Regression and Poststratification (MRP or, colloqially, Mister P) is the current gold standard for extrapolating opinions to smaller units of interest than the survey was originally designed to represent. MRP's performance is well-documented in papers by @lax_how_2009, @warshaw_how_2012, and @buttice_how_2013, who successfully recover state- and district-level estimates of opinion from nationally representative surveys. 
@@ -93,8 +92,8 @@ data("gaymar")
 census06 <- census06 %>% merge(svy %>% select(state,stateid) %>% distinct())
 factors <- c("region","gXr","state")
 census06[factors] <- lapply(census06[factors],factor)
-svy[factors] <- lapply(svy[factors],factor)
-barp.obj <- barp(y = "supp_gaymar",
+svy[c(factors)] <- lapply(svy[c(factors)],factor)
+barp.obj <- barp(y = "opp_gaymar",
                  x = c("age","educ","gXr",
                        "pvote","religcon",
                        "state","region"),
@@ -362,6 +361,39 @@ plot(barpcov_int,
 
 ```{r save,eval=FALSE,echo=FALSE}
 save(list = c("barp.obj","barp.obj2","barp.class","barp.class2","barpcov","barpcov_int","barpcov_perm","bpd","bpd1","bpd3"),file = "barp_vignette2.RData")
+```
+
+### 3.4 Missing Data
+
+The goal of extrapolating representative data from non-representative surveys is fundamentally a missing data problem where the more sparsely populated bins constitute the missing data. However, unlike well-known imputation methods such as **Amelia** which attempt to recover missing data at the unit of the original data, MRP-style methods predict opinions at the level of grouped bins of individuals where the bins are defined by observable covariates. 
+
+Nevertheless, there may be situations, particularly in panel data, where observations are missing at the individual respondent level in a survey. **BARP** allows users to implement a variety of imputation methods via `use_missing_data`, including using the simple average of the vector of observations (`replace_missing_data_with_x_j_bar`), using a linear model (`impute_missingness_with_x_j_bar_for_lm`), using a random forest imputation method (`impute_missingness_with_rf_impute`), or to treat the missing data as covariates (`use_missing_data_dummies_as_covars`).
+
+```{r save,eval=FALSE,echo=FALSE}
+svy$gXr[sample(1:nrow(svy),nrow(svy)*.01,replace = F)] <- NA
+
+barp_covs <- barp(y = "supp_gaymar",
+                 x = c("age","educ","gXr",
+                       "pvote","religcon",
+                       "state","region"),
+                 dat = svy,census = census06,
+                 geo.unit = "state",
+                 proportion = "n",
+                 use_missing_data = TRUE,
+                 use_missing_data_dummies_as_covars = TRUE)
+barp.rf <- barp(y = "supp_gaymar",
+                 x = c("age","educ","gXr",
+                       "pvote","religcon",
+                       "state","region"),
+                 dat = svy,census = census06,
+                 geo.unit = "state",
+                 proportion = "n",
+                 use_missing_data = TRUE,
+                 impute_missingness_with_rf_impute = TRUE)
+x.train <- dat[, which(colnames(dat) %in% x)]
+y.train <- dat[, which(colnames(dat) %in% y)]
+bartMachine(X = x.train,y = factor(y.train))
+test <- rfImpute(X, y,iter = 2)
 ```
 
 ## 4.0 Conclusion
