@@ -93,13 +93,14 @@ census06 <- census06 %>% merge(svy %>% select(state,stateid) %>% distinct())
 factors <- c("region","gXr","state")
 census06[factors] <- lapply(census06[factors],factor)
 svy[c(factors)] <- lapply(svy[c(factors)],factor)
-barp.obj <- barp(y = "opp_gaymar",
+barp.obj <- barp(y = "supp_gaymar",
                  x = c("age","educ","gXr",
                        "pvote","religcon",
                        "state","region"),
                  dat = svy,census = census06,
                  geo.unit = "state",
-                 proportion = "n")
+                 proportion = "n",
+                 serialize = TRUE)
 ```
 
 The resulting `barp` object summarizes the predicted opinions and bounds as a `data.frame`. Plotting the `barp` object will return either a simple plot of the predicted values and credible intervals (`evaluate_model = FALSE`, the default), or a set of convergence diagnostic plots (`evaluate_model = TRUE`). The latter plot should exhibit relative stability across the post-burn-in Markov Chain Monte Carlo (MCMC) simulations in terms of percent acceptance, number of leafs and terminal nodes, and tree depth (and $\sigma^2$ when $y$ is not a factor).
@@ -359,20 +360,17 @@ plot(barpcov_int,
      sig_level = 0.10)
 ```
 
-```{r save,eval=FALSE,echo=FALSE}
-save(list = c("barp.obj","barp.obj2","barp.class","barp.class2","barpcov","barpcov_int","barpcov_perm","bpd","bpd1","bpd3"),file = "barp_vignette2.RData")
-```
-
 ### 3.4 Missing Data
 
 The goal of extrapolating representative data from non-representative surveys is fundamentally a missing data problem where the more sparsely populated bins constitute the missing data. However, unlike well-known imputation methods such as **Amelia** which attempt to recover missing data at the unit of the original data, MRP-style methods predict opinions at the level of grouped bins of individuals where the bins are defined by observable covariates. 
 
-Nevertheless, there may be situations, particularly in panel data, where observations are missing at the individual respondent level in a survey. **BARP** allows users to implement a variety of imputation methods via `use_missing_data`, including using the simple average of the vector of observations (`replace_missing_data_with_x_j_bar`), using a linear model (`impute_missingness_with_x_j_bar_for_lm`), using a random forest imputation method (`impute_missingness_with_rf_impute`), or to treat the missing data as covariates (`use_missing_data_dummies_as_covars`).
+Nevertheless, there may be situations, particularly in panel data, where observations are missing at the individual respondent level in a survey. **BARP** allows users to implement a variety of imputation methods via `use_missing_data`, including using the simple average of the vector of observations (`replace_missing_data_with_x_j_bar`), using a linear model (`impute_missingness_with_x_j_bar_for_lm`), or to treat the missing data as covariates (`use_missing_data_dummies_as_covars`). A future update of the **BARP** package will add in functionality for the random forest imputation method (`impute_missingness_with_rf_impute`).
 
-```{r save,eval=FALSE,echo=FALSE}
+```{r missingimpute,eval=FALSE}
 svy$gXr[sample(1:nrow(svy),nrow(svy)*.01,replace = F)] <- NA
+svy$educ[sample(1:nrow(svy),nrow(svy)*.01,replace = F)] <- NA
 
-barp_covs <- barp(y = "supp_gaymar",
+barp.covs <- barp(y = "supp_gaymar",
                  x = c("age","educ","gXr",
                        "pvote","religcon",
                        "state","region"),
@@ -381,7 +379,8 @@ barp_covs <- barp(y = "supp_gaymar",
                  proportion = "n",
                  use_missing_data = TRUE,
                  use_missing_data_dummies_as_covars = TRUE)
-barp.rf <- barp(y = "supp_gaymar",
+
+barp.xjbar <- barp(y = "supp_gaymar",
                  x = c("age","educ","gXr",
                        "pvote","religcon",
                        "state","region"),
@@ -389,11 +388,29 @@ barp.rf <- barp(y = "supp_gaymar",
                  geo.unit = "state",
                  proportion = "n",
                  use_missing_data = TRUE,
-                 impute_missingness_with_rf_impute = TRUE)
-x.train <- dat[, which(colnames(dat) %in% x)]
-y.train <- dat[, which(colnames(dat) %in% y)]
-bartMachine(X = x.train,y = factor(y.train))
-test <- rfImpute(X, y,iter = 2)
+                 replace_missing_data_with_x_j_bar = TRUE)
+
+barp.xjlm <- barp(y = "supp_gaymar",
+                 x = c("age","educ","gXr",
+                       "pvote","religcon",
+                       "state","region"),
+                 dat = svy,census = census06,
+                 geo.unit = "state",
+                 proportion = "n",
+                 use_missing_data = TRUE,
+                 impute_missingness_with_x_j_bar_for_lm = TRUE)
+```
+```{r imputecor,eval=T,echo = T}
+cor.mat <- cor(cbind(barp.obj$pred.opn$pred.opn,
+          barp.xjbar$pred.opn$pred.opn,
+          barp.xjlm$pred.opn$pred.opn,
+          barp.covs$pred.opn$pred.opn))
+colnames(cor.mat) <- rownames(cor.mat) <- c("No Missing","Impute Xj Bar","Impute Xj LM","Missing as Covs")
+round(cor.mat,3)
+```
+
+```{r save,eval=FALSE,echo=FALSE}
+save(list = c("barp.obj","barp.obj2","barp.class","barp.class2","barpcov","barpcov_int","barpcov_perm","bpd","bpd1","bpd3","barp.covs","barp.xjbar","barp.xjlm"),file = "barp_vignette2.RData")
 ```
 
 ## 4.0 Conclusion
