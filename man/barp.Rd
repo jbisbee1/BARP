@@ -4,8 +4,8 @@
 \alias{barp}
 \title{BARP}
 \usage{
-barp(y, x, dat, census, geo.unit, proportion = "None", cred_int = c(0.025,
-  0.975), BSSD = F, nsims = 20, ...)
+barp(y, x, dat, census, geo.unit, proportion = "None",
+  cred_int = c(0.025, 0.975), BSSD = F, nsims = 20, ...)
 }
 \arguments{
 \item{y}{Outcome of interest. Should be a character of the column name containing the variable of interest.}
@@ -31,7 +31,7 @@ barp(y, x, dat, census, geo.unit, proportion = "None", cred_int = c(0.025,
 \item{plot_convergence}{Plot convergence diagnostics calculated by bartMachine. Defaults to \code{TRUE}.}
 }
 \value{
-Returns an object of class ``barp'', containing a list of the following components:
+Returns an object of class ``BARP'', containing a list of the following components:
 \item{pred.opn}{A \code{data.frame} where each row corresponds to the geographic unit of interest and the columns summarize the predicted outcome and the upper and lower bounds for the given credible interval (\code{cred_int}).}
 \item{trees}{A \code{bartMachine} object. See \code{\link{bartMachine}} for details.}
 }

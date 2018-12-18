@@ -4,8 +4,8 @@
 \alias{barp_partial_dependence}
 \title{barp_partial_dependence}
 \usage{
-barp_partial_dependence(barp, vars = NULL, prop_data = 0.1, levs = NULL,
-  credible_interval = c(0.025, 0.975))
+barp_partial_dependence(barp, vars = NULL, prop_data = 0.1,
+  levs = NULL, credible_interval = c(0.025, 0.975))
 }
 \arguments{
 \item{vars}{The variable names or column indices of interest.}

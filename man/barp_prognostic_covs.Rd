@@ -4,8 +4,9 @@
 \alias{barp_prognostic_covs}
 \title{barp_prognostic_covs}
 \usage{
-barp_prognostic_covs(BARP, interactions = F, perm_test = T, num_reps = 10,
-  num_trees = 20, num_permute = 10, type = "splits", ...)
+barp_prognostic_covs(BARP, interactions = F, perm_test = T,
+  num_reps = 10, num_trees = 20, num_permute = 10, type = "splits",
+  ...)
 }
 \arguments{
 \item{BARP}{A \code{BARP} object.}
