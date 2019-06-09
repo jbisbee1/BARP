@@ -29,9 +29,11 @@
 #' @export
 
 plot.barpcov <- function(barpcov,
+                         topn = 10,
                          var_names = NULL,
                          sig_level = NULL) 
 {
+  topn <- min(topn,ncol(barpcov$covariate_importance))
   ords <- order(apply(barpcov$covariate_importance,2,mean),decreasing = T)
   if(is.null(var_names)) {
     var_names <- colnames(barpcov$covariate_importance)
@@ -65,8 +67,8 @@ plot.barpcov <- function(barpcov,
                                           substr(barpcov$type,2,10)))
   }
   
-  ggplot(df, aes(var,mean))+ 
-    geom_bar(stat = "identity",fill = rev(df$cols)) +
+  ggplot(df[1:topn,], aes(var,mean))+ 
+    geom_bar(stat = "identity",fill = rev(df$cols[1:topn])) +
     coord_flip() + 
     labs(title = title,
          subtitle = subtitle,

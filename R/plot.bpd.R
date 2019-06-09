@@ -1,7 +1,7 @@
 #' plot.bpd
 #' 
 #' This function plots the partial dependence results estimated returned by running barp_partial_dependence.
-#' @param bpd A \code{\link{barp_partial_dependence} partial dependence object of class "bpd".
+#' @param bpd A \code{\link{barp_partial_dependence}} partial dependence object of class "bpd".
 #' @param var_names A vector of variable names. If \code{NULL} (the default), the variable names from the training data columns are used.
 #' @param var_labs A list of variable labels corresponding to the levels at which the partial dependence was calculated. If \code{NULL} (the default), the raw values are used.
 #' @param is_categorical A vector of logicals (T,F) corresponding to which variables are categorical and which are continuous.If \code{NULL} (the default), the function determines whether each variable is categorical or continuous based on the data class.

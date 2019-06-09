@@ -4,8 +4,9 @@
 \alias{barp}
 \title{BARP}
 \usage{
-barp(y, x, dat, census, geo.unit, proportion = "None",
-  cred_int = c(0.025, 0.975), BSSD = F, nsims = 20, ...)
+barp(y, x, dat, census, geo.unit, algorithm = "BARP",
+  proportion = "None", cred_int = c(0.025, 0.975), BSSD = F,
+  nsims = 200, setSeed = NULL, ...)
 }
 \arguments{
 \item{y}{Outcome of interest. Should be a character of the column name containing the variable of interest.}
@@ -18,6 +19,8 @@ barp(y, x, dat, census, geo.unit, proportion = "None",
 
 \item{geo.unit}{The column name corresponding to the unit at which outcomes should be aggregated.}
 
+\item{algorithm}{Algorithm for predicting opinions. Can be any algorithm(s) included in the \code{SuperLearner} package. If multiple algorithms are listed, predicted opinions are provided for each separately, as well as for the weighted ensemble. Defaults to \code{BARP} which implements Bayesian Additive Regression Trees via \code{bartMachine}.}
+
 \item{proportion}{The column name corresponding to the proportions for covariate bins in the Census data. If left to the default \code{None} value, BARP assumes raw census data and estimates bin proportions automatically.}
 
 \item{cred_int}{A vector giving the lower and upper bounds on the credible interval for the predictions.}
@@ -26,14 +29,15 @@ barp(y, x, dat, census, geo.unit, proportion = "None",
 
 \item{nsims}{The number of bootstrap simulations.}
 
-\item{...}{Additional arguments to be passed to bartMachine.}
+\item{setSeed}{Seed to control random number generation.}
 
-\item{plot_convergence}{Plot convergence diagnostics calculated by bartMachine. Defaults to \code{TRUE}.}
+\item{...}{Additional arguments to be passed to bartMachine or SuperLearner.}
 }
 \value{
 Returns an object of class ``BARP'', containing a list of the following components:
 \item{pred.opn}{A \code{data.frame} where each row corresponds to the geographic unit of interest and the columns summarize the predicted outcome and the upper and lower bounds for the given credible interval (\code{cred_int}).}
 \item{trees}{A \code{bartMachine} object. See \code{\link{bartMachine}} for details.}
+\item{risk}{A \code{data.frame} containing the cross-validation risk for each algorithm and the associated weight used in the ensemble predictions. Only useful when multiple algorithms are used.}
 }
 \description{
 This function uses Bayesian Additive Regression Trees (BART) to extrapolate survey data to a level of geographic aggregation at which the original survey was not sampled to be representative of.
@@ -50,6 +54,8 @@ barp <- barp(y = "supp_gaymar",
 }
 \seealso{
 \code{\link{bartMachine}} which this program uses to implement Bayesian Additive Regression Trees.
+
+\code{\link{SuperLearner}} which this program uses to implement alternative regularizers.
 }
 \keyword{BARP}
 \keyword{MRP}

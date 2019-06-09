@@ -1,7 +1,7 @@
 Package: BARP
 Title: Mister P with Bayesian Additive Regression Trees
-Version: 0.0.0.9001
-Date: 2018-05-15
+Version: 0.0.1.0001
+Date: 2019-06-05
 Authors@R: person("James", "Bisbee", email = "james.bisbee@nyu.edu",
                   role = c("aut", "cre"))
 Description: BARP applies Bayesian Additive Regression Trees (BART) to survey data and poststratifies on census data to recover more accurate estimates of opinion at finer levels of geographic aggregation than the original survey was sampled to represent. The user must supply both the survey data and the census data, ensuring that the individual-level and geography-level covariates are identically named across both datasets. The user can calculate proportions for each covariate bin in the census data and pass the column name to the "proportion" argument. Alternatively, the user may provide the raw census data and pass "None" to the proportion argument.
@@ -9,7 +9,8 @@ Depends:
 	R (>= 3.1.0),
 	bartMachine (>= 1.1.0),
 	dplyr,
-	ggplot2
+	ggplot2,
+	SuperLearner
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

@@ -9,6 +9,8 @@
   "#6a51a3"), ...)
 }
 \arguments{
+\item{bpd}{A \code{\link{barp_partial_dependence}} partial dependence object of class "bpd".}
+
 \item{var_names}{A vector of variable names. If \code{NULL} (the default), the variable names from the training data columns are used.}
 
 \item{var_labs}{A list of variable labels corresponding to the levels at which the partial dependence was calculated. If \code{NULL} (the default), the raw values are used.}

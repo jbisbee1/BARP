@@ -4,12 +4,14 @@
 \alias{plot.barp}
 \title{plot.barp}
 \usage{
-\method{plot}{barp}(barp, evaluate_model = F)
+\method{plot}{barp}(barp.obj, evaluate_model = F, algorithm = "all")
 }
 \arguments{
-\item{barp}{A \code{\link{barp}} object.}
+\item{barp.obj}{A \code{\link{barp}} object.}
 
 \item{evaluate_model}{Plot model convergence diagnostics? If left to the default \code{FALSE}, return a plot of predictions and credible intervals.}
+
+\item{algorithm}{Select which algorithm's predictions should be plotted. If left to the default \code{"all"}, plot all predictions without credible intervals.}
 }
 \description{
 This function plots the predictions by geographic unit \code{geo.unit}.
@@ -23,7 +25,8 @@ barp.obj <- barp(y = "supp_gaymar",
              geo.unit = "stateid",
              proportion = "n")
 plot(barp.obj,
-     evaluate_model = F)
+     evaluate_model = F,
+     algorithm = "BARP")
 }
 \seealso{
 \code{\link{barp}} which creates the prerequisite \code{barp} object.

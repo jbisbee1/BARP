@@ -4,13 +4,11 @@
 \alias{barp_prognostic_covs}
 \title{barp_prognostic_covs}
 \usage{
-barp_prognostic_covs(BARP, interactions = F, perm_test = T,
+barp_prognostic_covs(barp.obj, interactions = F, perm_test = T,
   num_reps = 10, num_trees = 20, num_permute = 10, type = "splits",
-  ...)
+  setSeed = NULL, ...)
 }
 \arguments{
-\item{BARP}{A \code{BARP} object.}
-
 \item{interactions}{A logical statement for whether to evaluate individual variables or their pairwise interactions. Defaults to \code{FALSE}.}
 
 \item{perm_test}{A logical statement for whether to evaluate covariate significance via permutation tests. Defaults to \code{FALSE}.}
@@ -22,6 +20,10 @@ barp_prognostic_covs(BARP, interactions = F, perm_test = T,
 \item{num_permute}{The number of permutation simulations.}
 
 \item{type}{The context in which to evaluate the proportion of variable inclusion, either in terms of \code{trees} or in terms of \code{splits}.}
+
+\item{setSeed}{Seed to control random number generation.}
+
+\item{BARP}{A \code{BARP} object.}
 }
 \value{
 Returns an object of class "barpcov", containing a list of the following components:
@@ -35,13 +37,13 @@ This function extracts the relative prognostic power of the covariates used in t
 }
 \examples{
 data("gaymar")
-BARP <- barp(y = "supp_gaymar",
+barp.obj <- barp(y = "supp_gaymar",
              x = c("pvote","religcon","age","educ","gXr","stateid","region"),
              dat = svy,
              census = census06,
              geo.unit = "stateid",
              proportion = "n")
-barpcov <- barp_prognostic_covs(BARP,
+barpcov <- barp_prognostic_covs(barp.obj,
                                 interactions = F,
                                 perm_test = T,
                                 num_reps = 30,

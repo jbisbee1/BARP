@@ -4,17 +4,19 @@
 \alias{barp_partial_dependence}
 \title{barp_partial_dependence}
 \usage{
-barp_partial_dependence(barp, vars = NULL, prop_data = 0.1,
-  levs = NULL, credible_interval = c(0.025, 0.975))
+barp_partial_dependence(barp.obj, vars = NULL, prop_data = 0.1,
+  credible_interval = c(0.025, 0.975), setSeed = NULL)
 }
 \arguments{
-\item{vars}{The variable names or column indices of interest.}
+\item{vars}{The variable names or column indices of interest. #' @param vars The variable names or column indices of interest. If a character vector, values at which to evaluate partial dependences based on quantiles c(0.05,seq(.1,.9,by = .1),.95).}
 
 \item{prop_data}{The percentage of the original data to use for estimation. Larger values are more time consuming.}
 
-\item{levs}{A list of values at which to estimate the partial dependence for each variable. If NULL (the default), quantiles c(0.05,seq(.1,.9,by = .1),.95) are used.}
-
 \item{credible_interval}{The credible interval for the estimates.}
+
+\item{setSeed}{Seed to control random number generation.}
+
+\item{barp}{A \code{\link{barp}} object.}
 
 \item{...}{Additional arguments to be passed to bartMachine.}
 }
@@ -35,10 +37,10 @@ barp.obj <- barp(y = "supp_gaymar",
              geo.unit = "stateid",
              proportion = "n")
 bpd <- barp_partial_dependence(barp = barp.obj,
-                               vars = c("region","educ"),
+                               vars = list(region = 1:4,educ = 1:4),
                                prop_data = .2,
-                               levs = list(c(1:4),c(1:4)),
-                               credible_interval = c(0.025,0.975))
+                               credible_interval = c(0.025,0.975),
+                               setSeed = 1021)
 }
 \seealso{
 \code{\link{barp}} which generates the prerequisite \code{barp} object.
