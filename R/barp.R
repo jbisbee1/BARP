@@ -80,7 +80,6 @@ barp <- function(y,x,dat,census,geo.unit,algorithm = "BARP",
         serial = TRUE
       }
     }
-    dots.barp$seed <- setSeed
     barp_aug <- create.Learner("SL.bartMachine",params = dots.barp)
     algorithm[which(grepl("barp|BARP|bartMachine",algorithm))] <- barp_aug$names
     if(serial) {
@@ -184,12 +183,6 @@ barp <- function(y,x,dat,census,geo.unit,algorithm = "BARP",
     for(oth in 1:length(dots.oth)) {
       input[[names(dots.oth)[oth]]] <- dots.oth[[oth]]
     }
-    # Y = input$Y
-    # X = input$X
-    # newX = input$newX
-    # SL.library = input$SL.library
-    # method = input$method
-    # family = input$family
     
     sl = do.call(barp.SL,input)
     

@@ -134,9 +134,9 @@ barp.obj2 <- barp(y = "supp_gaymar",
                   proportion = "n",
                   BSSD = T,
                   nsims = 50,
-                  num_trees = 20,
-                  num_burn_in = 50,
-                  num_iterations_after_burn_in = 50,
+                  num_trees = 40,
+                  num_burn_in = 250,
+                  num_iterations_after_burn_in = 250,
                   setSeed = 1021)
 ```
 ```{r VigFig3-barpBSplot,fig.height = 7,fig.width=7,fig.align='center'}
