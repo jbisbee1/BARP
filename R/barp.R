@@ -55,7 +55,7 @@ barp <- function(y,x,dat,census,geo.unit,algorithm = "BARP",
   
   # Optional parameters
   dots <- list(...)
-  
+  dots$seed = setSeed
   # Building parameter lists
   bart.args <- names(as.list(args(bartMachine)))
   serial = FALSE
@@ -84,6 +84,9 @@ barp <- function(y,x,dat,census,geo.unit,algorithm = "BARP",
     algorithm[which(grepl("barp|BARP|bartMachine",algorithm))] <- barp_aug$names
     if(serial) {
       dots.barp[["serialize"]] <- TRUE
+    }
+    if(!is.null(setSeed)) {
+      dots.barp[['seed']] <- setSeed
     }
     barp_serial <- create.Learner("SL.bartMachine",params = dots.barp,name_prefix = "BARPserial")
     
