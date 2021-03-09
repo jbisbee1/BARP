@@ -4,9 +4,20 @@
 \alias{barp}
 \title{BARP}
 \usage{
-barp(y, x, dat, census, geo.unit, algorithm = "BARP",
-  proportion = "None", cred_int = c(0.025, 0.975), BSSD = F,
-  nsims = 200, setSeed = NULL, ...)
+barp(
+  y,
+  x,
+  dat,
+  census,
+  geo.unit,
+  algorithm = "BARP",
+  proportion = "None",
+  cred_int = c(0.025, 0.975),
+  BSSD = F,
+  nsims = 200,
+  setSeed = NULL,
+  ...
+)
 }
 \arguments{
 \item{y}{Outcome of interest. Should be a character of the column name containing the variable of interest.}

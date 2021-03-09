@@ -4,8 +4,7 @@
 \alias{plot.barpcov}
 \title{plot.barpcov}
 \usage{
-\method{plot}{barpcov}(barpcov, topn = 10, var_names = NULL,
-  sig_level = NULL)
+\method{plot}{barpcov}(barpcov, topn = 10, var_names = NULL, sig_level = NULL)
 }
 \arguments{
 \item{barpcov}{A \code{\link{barp_prognostic_covs}} covariate importance object of class "barpcov".}

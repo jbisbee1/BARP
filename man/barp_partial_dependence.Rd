@@ -4,8 +4,13 @@
 \alias{barp_partial_dependence}
 \title{barp_partial_dependence}
 \usage{
-barp_partial_dependence(barp.obj, vars = NULL, prop_data = 0.1,
-  credible_interval = c(0.025, 0.975), setSeed = NULL)
+barp_partial_dependence(
+  barp.obj,
+  vars = NULL,
+  prop_data = 0.1,
+  credible_interval = c(0.025, 0.975),
+  setSeed = NULL
+)
 }
 \arguments{
 \item{vars}{The variable names or column indices of interest. #' @param vars The variable names or column indices of interest. If a character vector, values at which to evaluate partial dependences based on quantiles c(0.05,seq(.1,.9,by = .1),.95).}

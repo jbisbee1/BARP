@@ -4,9 +4,17 @@
 \alias{barp_prognostic_covs}
 \title{barp_prognostic_covs}
 \usage{
-barp_prognostic_covs(barp.obj, interactions = F, perm_test = T,
-  num_reps = 10, num_trees = 20, num_permute = 10, type = "splits",
-  setSeed = NULL, ...)
+barp_prognostic_covs(
+  barp.obj,
+  interactions = F,
+  perm_test = T,
+  num_reps = 10,
+  num_trees = 20,
+  num_permute = 10,
+  type = "splits",
+  setSeed = NULL,
+  ...
+)
 }
 \arguments{
 \item{interactions}{A logical statement for whether to evaluate individual variables or their pairwise interactions. Defaults to \code{FALSE}.}
