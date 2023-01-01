@@ -96,7 +96,6 @@ barp.SL <- function (Y, X, newX = NULL, family = gaussian(), SL.library,
                      method = "method.NNLS", id = NULL, verbose = FALSE, control = list(), 
                      cvControl = list(), obsWeights = NULL, env = parent.frame(),BSSD = FALSE) 
 {
-  
   time_start = proc.time()
   if (is.character(method)) {
     if (exists(method, mode = "list")) {
@@ -350,10 +349,25 @@ barp.SL <- function (Y, X, newX = NULL, family = gaussian(), SL.library,
     } else {
       tmpX <- subset(dataX, select = whichScreen[lib$rowScreen[index], ], drop = FALSE)
       tmpNewX <- subset(newX, select = whichScreen[lib$rowScreen[index], ], drop = FALSE)
+      pred_fn <- function (y, X, newX, family, obsWeights, id, num_trees = 50, 
+                           num_burn_in = 250, verbose = F, alpha = 0.95, beta = 2, k = 2, 
+                           q = 0.9, nu = 3, num_iterations_after_burn_in = 1000, ...) 
+      {
+        SuperLearner:::.SL.require("bartMachine")
+        model = bartMachine::bartMachine(X = X, y = y, num_trees = num_trees, 
+                                         num_burn_in = num_burn_in, verbose = verbose, alpha = alpha, 
+                                         beta = beta, k = k, q = q, nu = nu, 
+                                         num_iterations_after_burn_in = num_iterations_after_burn_in)
+        pred <- predict(model, newX)
+        fit <- list(object = model)
+        class(fit) <- c("SL.bartMachine")
+        out <- list(pred = pred, fit = fit)
+        return(out)
+      }
     }
     tmpX <- tmpX[,order(colnames(tmpX))]
     tmpNewX <- tmpNewX[,order(colnames(tmpNewX))]
-    testAlg <- try(do.call(pred_fn, list(Y = dataY, X = tmpX, 
+    testAlg <- try(do.call(pred_fn, list(y = dataY, X = tmpX, 
                                          newX = tmpNewX, family = family, id = id, obsWeights = obsWeights)))
     if (inherits(testAlg, "try-error")) {
       warning(paste("Error in algorithm", lib$predAlgorithm[index], 
